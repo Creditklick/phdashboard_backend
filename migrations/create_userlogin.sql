@@ -197,12 +197,12 @@
 
 
 
-CREATE TABLE member (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    process_name VARCHAR(100),
-    agent VARCHAR(100),
-    target DECIMAL(10,2),
-    agent_code VARCHAR(50),
-    CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    datewise DATE
-) ENGINE=InnoDB;
+-- CREATE TABLE member (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     process_name VARCHAR(100),
+--     agent VARCHAR(100),
+--     target DECIMAL(10,2),
+--     agent_code VARCHAR(50),
+--     CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     datewise DATE
+-- ) ENGINE=InnoDB;
