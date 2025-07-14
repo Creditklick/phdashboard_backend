@@ -696,6 +696,8 @@ const UploadTargetFile = async (req, res) => {
   const process = req.body.Process;
   const tablename = mapdatabase[process];
 
+  console.log("Table is ",tablename);
+
   if (!tablename) {
     return res.status(400).json({ error: 'Invalid process type' });
   }
@@ -723,6 +725,8 @@ const UploadTargetFile = async (req, res) => {
       process,
       item.teamleader
     ]);
+
+
 
     const query = `INSERT INTO ${tablename} (datewise, agent_code, agent_name, amount_collected, account_number, AM, Process, TeamLeader) VALUES ?`;
 

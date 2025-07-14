@@ -47,23 +47,6 @@
 
 
 
--- CREATE TABLE agent_recovery (
---   `id` int(11) NOT NULL AUTO_INCREMENT,
---   `emp_code` varchar(255) NOT NULL UNIQUE,
---   `emp_name` varchar(255) DEFAULT NULL,
---   `attendance_records` text COMMENT 'Comma-separated P/A values for 31 days',
---   `team_leader` varchar(255) DEFAULT NULL,
---   `upload_date` date DEFAULT NULL,
---   `Process` varchar(255) DEFAULT NULL,
---   `AM` varchar(255) DEFAULT NULL,
---   PRIMARY KEY (`id`),
---   UNIQUE KEY `unique_emp_code` (`emp_code`),
---   KEY `idx_team_leader` (`team_leader`),
---   KEY `idx_upload_date` (`upload_date`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-
 
 
 -- CREATE TABLE axis_card_paid (
@@ -72,10 +55,10 @@
 --     agent_name VARCHAR(100),
 --     amount_collected DECIMAL(10,2),
 --     account_number VARCHAR(50),
---     AM VARCHAR(100),
---     Process VARCHAR(100),
---     TeamLeader VARCHAR(100),
---      CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     am VARCHAR(100),
+--     process VARCHAR(100),
+--     teamleader VARCHAR(100),
+--     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 --     datewise DATE,
 --     INDEX idx_datewise (datewise)
 -- ) ENGINE=InnoDB;
@@ -91,10 +74,10 @@
 --     agent_name VARCHAR(100),
 --     amount_collected DECIMAL(10,2),
 --     account_number VARCHAR(50),
---     AM VARCHAR(100),
---     Process VARCHAR(100),
---     TeamLeader VARCHAR(100),
---      CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     am VARCHAR(100),
+--     process VARCHAR(100),
+--     teamleader VARCHAR(100),
+--      createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 --     datewise DATE,
 --     INDEX idx_datewise (datewise)
 -- ) ENGINE=InnoDB;
@@ -110,10 +93,10 @@
 --     agent_name VARCHAR(100),
 --     amount_collected DECIMAL(10,2),
 --     account_number VARCHAR(50),
---     AM VARCHAR(100),
---     Process VARCHAR(100),
---     TeamLeader VARCHAR(100),
---      CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     am VARCHAR(100),
+--     process VARCHAR(100),
+--     teamleader VARCHAR(100),
+--      createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 --     datewise DATE,
 --     INDEX idx_datewise (datewise)
 -- ) ENGINE=InnoDB;
@@ -126,10 +109,10 @@
 --     agent_name VARCHAR(100),
 --     amount_collected DECIMAL(10,2),
 --     account_number VARCHAR(50),
---     AM VARCHAR(100),
---     Process VARCHAR(100),
---     TeamLeader VARCHAR(100),
---      CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     am VARCHAR(100),
+--     process VARCHAR(100),
+--     teamleader VARCHAR(100),
+--      createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 --     datewise DATE,
 --     INDEX idx_datewise (datewise)
 -- ) ENGINE=InnoDB;
@@ -147,10 +130,10 @@
 --     agent_name VARCHAR(100),
 --     amount_collected DECIMAL(10,2),
 --     account_number VARCHAR(50),
---     AM VARCHAR(100),
---     Process VARCHAR(100),
---     TeamLeader VARCHAR(100),
---      CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     am VARCHAR(100),
+--     process VARCHAR(100),
+--     teamleader VARCHAR(100),
+--      createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 --     datewise DATE,
 --     INDEX idx_datewise (datewise)
 -- ) ENGINE=InnoDB;
@@ -165,29 +148,29 @@
 --     agent_name VARCHAR(100),
 --     amount_collected DECIMAL(10,2),
 --     account_number VARCHAR(50),
---     AM VARCHAR(100),
---     Process VARCHAR(100),
---     TeamLeader VARCHAR(100),
---      CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     am VARCHAR(100),
+--     process VARCHAR(100),
+--     teamleader VARCHAR(100),
+--      createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 --     datewise DATE,
 --     INDEX idx_datewise (datewise)
 -- ) ENGINE=InnoDB;
 
 
 
--- CREATE TABLE sbi_recovery_paid (
---     id INT AUTO_INCREMENT PRIMARY KEY,
---     agent_code VARCHAR(50),
---     agent_name VARCHAR(100),
---     amount_collected DECIMAL(10,2),
---     account_number VARCHAR(50),
---     AM VARCHAR(100),
---     Process VARCHAR(100),
---     TeamLeader VARCHAR(100),
---      CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
---     datewise DATE,
---     INDEX idx_datewise (datewise)
--- ) ENGINE=InnoDB;
+CREATE TABLE sbi_recovery_paid (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    agent_code VARCHAR(50),
+    agent_name VARCHAR(100),
+    amount_collected DECIMAL(10,2),
+    account_number VARCHAR(50),
+    am VARCHAR(100),
+    process VARCHAR(100),
+    teamleader VARCHAR(100),
+     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    datewise DATE,
+    INDEX idx_datewise (datewise)
+) ENGINE=InnoDB;
 
 
 
@@ -197,12 +180,12 @@
 
 
 
--- CREATE TABLE member (
---     id INT AUTO_INCREMENT PRIMARY KEY,
---     process_name VARCHAR(100),
---     agent VARCHAR(100),
---     target DECIMAL(10,2),
---     agent_code VARCHAR(50),
---     CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
---     datewise DATE
--- ) ENGINE=InnoDB;
+-- -- CREATE TABLE member (
+-- --     id INT AUTO_INCREMENT PRIMARY KEY,
+-- --     process_name VARCHAR(100),
+-- --     agent VARCHAR(100),
+-- --     target DECIMAL(10,2),
+-- --     agent_code VARCHAR(50),
+-- --     CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+-- --     datewise DATE
+-- -- ) ENGINE=InnoDB;
