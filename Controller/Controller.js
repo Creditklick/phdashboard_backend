@@ -19,56 +19,102 @@ let otpStore = {};
 
 
 
-const UserLogin = async(req,res)=>{
+// const UserLogin = async(req,res)=>{
 
-    const {email , password , selectedRole } =  req.body;
+//     const {email , password , selectedRole } =  req.body;
 
-    console.log("selected role from frontend",selectedRole);
+//     console.log("selected role from frontend",selectedRole);
 
 
-    console.log(req.body);
+//     console.log(req.body);
 
    
-    try{ 
-          const [users] =  await Pool.promise().query('Select * from users where email = ? ',[email]);
-          if(users.length==0){
-              res.status(400).jsons({success : false , message  : "User Not Found"});
-          }
+//     try{ 
+//           const [users] =  await Pool.promise().query('Select * from users where email = ? ',[email]);
+//           if(users.length==0){
+//               res.status(400).json({success : false , message  : "User Not Found"});
+//           }
 
-          const user = users[0];
-
-
-
-          if(user.role != selectedRole){
-             return res.status(403).json({success : false , message : "Accesss Denied Role Not Match"});
-          }
-
-          const passwordmatch = await bcrypt.compare(password,user.password);
-
-
-          if(!passwordmatch){
-                res.status(401).json({success : false , message : "Invalid Credentials"});
-          }
-
-          const otp  = Math.floor(100000 + Math.random()*900000);
-
-          otpStore[email] =  {otp,expires : Date.now()+5*60*1000 , attempts :0};
+//           const user = users[0];
 
 
 
-          console.log("My Otp is ",otpStore);
+//           if(user.role != selectedRole){
+//              return res.status(403).json({success : false , message : "Accesss Denied Role Not Match"});
+//           }
+
+//           const passwordmatch = await bcrypt.compare(password,user.password);
 
 
-          await sendOtpEmail(email , otp);
+//           if(!passwordmatch){
+//                 res.status(401).json({success : false , message : "Invalid Credentials"});
+//           }
 
-          res.status(201).json({success : true , message : "OTP SEND SUCCESSFULLY"});   
+//           const otp  = Math.floor(100000 + Math.random()*900000);
 
-    }catch(err){
-         res.status(500).json({success : false , message : err.message})
+//           otpStore[email] =  {otp,expires : Date.now()+5*60*1000 , attempts :0};
+
+
+
+//           console.log("My Otp is ",otpStore);
+
+
+//           await sendOtpEmail(email , otp);
+
+//           res.status(201).json({success : true , message : "OTP SEND SUCCESSFULLY"});   
+
+//     }catch(err){
+//          res.status(500).json({success : false , message : err.message})
+//     }
+// }
+
+
+
+
+const UserLogin = async (req, res) => {
+  const { email, password, selectedRole } = req.body;
+
+  console.log("Selected role from frontend:", selectedRole);
+  console.log("Request body:", req.body);
+
+  try {
+    const [users] = await Pool.promise().query('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (users.length === 0) {
+      return res.status(400).json({ success: false, message: "User Not Found" });
     }
-}
 
+    const user = users[0];
 
+    if (user.role !== selectedRole) {
+      return res.status(403).json({ success: false, message: "Access Denied: Role does not match" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ success: false, message: "Invalid Credentials" });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    otpStore[email] = {
+      otp,
+      expires: Date.now() + 5 * 60 * 1000, // 5 minutes
+      attempts: 0,
+    };
+
+    console.log("Generated OTP:", otpStore);
+
+    await sendOtpEmail(email, otp);
+
+    return res.status(201).json({ success: true, message: "OTP sent successfully" });
+
+  } catch (err) {
+    console.error("Login error:", err);
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
 
 
 const UserSignup = async (req, res) => {

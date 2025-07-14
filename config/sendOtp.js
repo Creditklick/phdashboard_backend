@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer');
 const sendOtpEmail = async (email, otp) => {
   try {
     const transporter = nodemailer.createTransport({
+       host: 'smtp.gmail.com',
       service: 'gmail',
       auth: {
         user: 'nietlab123@gmail.com',
