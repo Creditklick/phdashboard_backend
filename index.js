@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use('/ph',router_system);
 
 
-app.post('/',(req,res)=>{
+app.get('/',(req,res)=>{
       return res.status(201).json({success: true , message : "Backend in running"});
 })
 
