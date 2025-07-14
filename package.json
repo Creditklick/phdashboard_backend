@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev" : "node index.js",
-    "start": "nodemon index.js",
-    "migrate": "node runMigrations.js",
-    "build" : "echo \"No build step needed\""
-  },
+  "dev": "node index.js",
+  "start": "node index.js",  
+  "migrate": "node runMigrations.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -18,12 +17,13 @@
     "cookie-parser": "^1.4.7",
     "cookies-parser": "^1.2.0",
     "cors": "^2.8.5",
-    "express": "^5.1.0",
+    "express": "^4.18.2",
     "moment": "^2.30.1",
     "multer": "^2.0.1",
     "mysql2": "^3.14.1",
     "nodemailer": "^7.0.3",
     "nodemon": "^3.1.10",
+    "path-to-regexp": "6.2.0",
     "uuid": "^11.1.0",
     "xlsx": "^0.18.5"
   }
