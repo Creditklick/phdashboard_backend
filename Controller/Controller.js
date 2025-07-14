@@ -179,7 +179,7 @@ const verifyOtp = async (req, res) => {
 
   delete otpStore[email]; // clean up OTP
 
-  const [userRow] = await Pool.promise().query('SELECT id , role FROM Users WHERE email = ?', [email]);
+  const [userRow] = await Pool.promise().query('SELECT id , role FROM users WHERE email = ?', [email]);
     const userId = userRow[0].id
   
     await Pool.promise().query(
