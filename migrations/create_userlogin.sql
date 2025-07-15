@@ -158,19 +158,19 @@
 
 
 
-CREATE TABLE sbi_recovery_paid (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    agent_code VARCHAR(50),
-    agent_name VARCHAR(100),
-    amount_collected DECIMAL(10,2),
-    account_number VARCHAR(50),
-    am VARCHAR(100),
-    process VARCHAR(100),
-    teamleader VARCHAR(100),
-     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    datewise DATE,
-    INDEX idx_datewise (datewise)
-) ENGINE=InnoDB;
+-- CREATE TABLE sbi_recovery_paid (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     agent_code VARCHAR(50),
+--     agent_name VARCHAR(100),
+--     amount_collected DECIMAL(10,2),
+--     account_number VARCHAR(50),
+--     am VARCHAR(100),
+--     process VARCHAR(100),
+--     teamleader VARCHAR(100),
+--      createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     datewise DATE,
+--     INDEX idx_datewise (datewise)
+-- ) ENGINE=InnoDB;
 
 
 
@@ -189,3 +189,20 @@ CREATE TABLE sbi_recovery_paid (
 -- --     CreatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 -- --     datewise DATE
 -- -- ) ENGINE=InnoDB;
+
+
+
+
+
+
+
+CREATE TABLE  monthly_targets(
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  process VARCHAR(100),
+  am VARCHAR(100),
+  target INT,
+  month VARCHAR(20),
+  TL VARCHAR(100),
+  agent VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -604,62 +604,181 @@ const processTargetMap = {
 
 
 // Define your actual table names for each process
+
+
+// const processTableMap = {
+//   axis_card_paid: 'axis_card_paid',
+//   axis_loan_paid: 'axis_loan_paid',
+//   axis_npa_paid: 'axis_npa_paid',
+//    city_paid: 'city_paid',
+//   encore_paid: 'encore_paid',
+//   iifl_paid: 'iifl_paid',
+//   sbi_recovery_paid: 'sbi_recovery_paid',
+// };
+
+// const getStatsFromTable = async (tableName, process) => {
+//   const [[totalHeadcount]] = await Pool.promise().query(`SELECT COUNT(*) AS count FROM ${tableName}`);
+//   const [[currentHeadcount]] = await Pool.promise().query(`SELECT COUNT(*) AS count FROM ${tableName} WHERE CreatedAt >= CURDATE() - INTERVAL 30 DAY`);
+//   const [[totalMonthCollection]] = await Pool.promise().query(`SELECT SUM(amount_collected) AS total FROM ${tableName} WHERE MONTH(CreatedAt) = MONTH(CURDATE())`);
+//   const [[currentMonthArchive]] = await Pool.promise().query(`SELECT COUNT(*) AS count FROM ${tableName} WHERE Process IS NOT NULL AND MONTH(CreatedAt) = MONTH(CURDATE())`);
+//   const [[allocationCount]] = await Pool.promise().query(`SELECT COUNT(DISTINCT account_number) AS count FROM ${tableName}`);
+//   const [[AMs]] = await Pool.promise().query(`SELECT COUNT(DISTINCT am) AS count FROM ${tableName}`);
+//   const [[TLs]] = await Pool.promise().query(`SELECT COUNT(DISTINCT teamleader) AS count FROM ${tableName}`);
+//    const [[targetRow]] = await Pool.promise().query(`SELECT sum(target) AS totalTarget FROM member  WHERE process_name = ?`, [process]);
+
+   
+   
+
+
+//   return {
+//     AMs: AMs.count,
+//     TLs: TLs.count,
+//     stats: {
+//       totalHeadcount: totalHeadcount.count,
+//       currentHeadcount: currentHeadcount.count,
+      
+//       targets: `${targetRow.totalTarget || 0}`,
+//       avgSalary: '65,000', // Static placeholder
+//       currentMonthArchive: currentMonthArchive.count,
+//       allocationCount: allocationCount.count,
+//       totalMonthCollection: `${totalMonthCollection.total || 0}`,
+//     },
+//   };
+// };
+
+
+// const getProcessReports = async (req, res) => {
+//   try {
+//     const results = [];
+
+//     for (const [processName, tableName] of Object.entries(processTableMap)) {
+//       console.log("process is ",processName , "table name is ",tableName);
+//       const targetProcessName = processTargetMap[processName];
+//       const processData = await getStatsFromTable(tableName, targetProcessName);
+//       results.push({ name: processName, ...processData });
+//     }
+
+//     res.status(200).json(results);
+//   } catch (error) {
+//     console.error('Dashboard fetch error:', error);
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+
+
+
+
+
+
+
+
+
+
 const processTableMap = {
   axis_card_paid: 'axis_card_paid',
   axis_loan_paid: 'axis_loan_paid',
   axis_npa_paid: 'axis_npa_paid',
-   city_paid: 'city_paid',
+  city_paid: 'city_paid',
   encore_paid: 'encore_paid',
   iifl_paid: 'iifl_paid',
   sbi_recovery_paid: 'sbi_recovery_paid',
 };
 
-const getStatsFromTable = async (tableName, process) => {
-  const [[totalHeadcount]] = await Pool.promise().query(`SELECT COUNT(*) AS count FROM ${tableName}`);
-  const [[currentHeadcount]] = await Pool.promise().query(`SELECT COUNT(*) AS count FROM ${tableName} WHERE CreatedAt >= CURDATE() - INTERVAL 30 DAY`);
-  const [[totalMonthCollection]] = await Pool.promise().query(`SELECT SUM(amount_collected) AS total FROM ${tableName} WHERE MONTH(CreatedAt) = MONTH(CURDATE())`);
-  const [[currentMonthArchive]] = await Pool.promise().query(`SELECT COUNT(*) AS count FROM ${tableName} WHERE Process IS NOT NULL AND MONTH(CreatedAt) = MONTH(CURDATE())`);
-  const [[allocationCount]] = await Pool.promise().query(`SELECT COUNT(DISTINCT account_number) AS count FROM ${tableName}`);
-  const [[AMs]] = await Pool.promise().query(`SELECT COUNT(DISTINCT AM) AS count FROM ${tableName}`);
-  const [[TLs]] = await Pool.promise().query(`SELECT COUNT(DISTINCT TeamLeader) AS count FROM ${tableName}`);
-   const [[targetRow]] = await Pool.promise().query(` SELECT sum(Target) AS totalTarget FROM monthly_targets  WHERE Process = ?`, [process]);
-
-
-
-
-
-
-
-
-
-
-  return {
-    AMs: AMs.count,
-    TLs: TLs.count,
-    stats: {
-      totalHeadcount: totalHeadcount.count,
-      currentHeadcount: currentHeadcount.count,
-      
-      targets: `${targetRow.totalTarget || 0}`,
-      avgSalary: '65,000', // Static placeholder
-      currentMonthArchive: currentMonthArchive.count,
-      allocationCount: allocationCount.count,
-      totalMonthCollection: `${totalMonthCollection.total || 0}`,
-    },
-  };
+// Helper function to format date for MySQL queries
+const formatDateForMySQL = (dateString) => {
+  return dateString; // Assuming date is already in 'YYYY-MM-DD' format
 };
 
+const getStatsFromTable = async (tableName, process, date) => {
+  const formattedDate = formatDateForMySQL(date);
+  const yearMonth = formattedDate.substring(0, 7); // Extract YYYY-MM for month-based queries
+  
+  try {
+    const [[totalHeadcount]] = await Pool.promise().query(
+      `SELECT COUNT(*) AS count FROM ${tableName} WHERE DATE(datewise) <= ?`, 
+      [formattedDate]
+    );
 
+    const [[currentHeadcount]] = await Pool.promise().query(
+      `SELECT COUNT(*) AS count FROM ${tableName} 
+       WHERE DATE(datewise) BETWEEN DATE_SUB(?, INTERVAL 30 DAY) AND ?`, 
+      [formattedDate, formattedDate]
+    );
 
+    const [[totalMonthCollection]] = await Pool.promise().query(
+      `SELECT SUM(amount_collected) AS total FROM ${tableName} 
+       WHERE DATE_FORMAT(datewise, '%Y-%m') = ?`, 
+      [yearMonth]
+    );
 
+    const [[currentMonthArchive]] = await Pool.promise().query(
+      `SELECT COUNT(*) AS count FROM ${tableName} 
+       WHERE Process IS NOT NULL AND DATE_FORMAT(datewise, '%Y-%m') = ?`, 
+      [yearMonth]
+    );
+
+    const [[allocationCount]] = await Pool.promise().query(
+      `SELECT COUNT(DISTINCT account_number) AS count FROM ${tableName} 
+       WHERE DATE(datewise) <= ?`, 
+      [formattedDate]
+    );
+
+    const [[AMs]] = await Pool.promise().query(
+      `SELECT COUNT(DISTINCT am) AS count FROM ${tableName} 
+       WHERE DATE(datewise) <= ?`, 
+      [formattedDate]
+    );
+
+    const [[TLs]] = await Pool.promise().query(
+      `SELECT COUNT(DISTINCT teamleader) AS count FROM ${tableName} 
+       WHERE DATE(datewise) <= ?`, 
+      [formattedDate]
+    );
+
+    const [[targetRow]] = await Pool.promise().query(
+      `SELECT SUM(target) AS totalTarget FROM member 
+       WHERE process_name = ? AND DATE(datewise) <= ?`, 
+      [process, formattedDate]
+    );
+
+    return {
+      AMs: AMs.count,
+      TLs: TLs.count,
+      stats: {
+        totalHeadcount: totalHeadcount.count,
+        currentHeadcount: currentHeadcount.count,
+        targets: `${targetRow.totalTarget || 0}`,
+        avgSalary: '65,000', // Static placeholder
+        currentMonthArchive: currentMonthArchive.count,
+        allocationCount: allocationCount.count,
+        totalMonthCollection: `${totalMonthCollection.total || 0}`,
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching stats for ${tableName}:`, error);
+    throw error;
+  }
+};
 
 const getProcessReports = async (req, res) => {
   try {
+    // Get date from query parameter (default to current date if not provided)
+    const date = req.query.date || new Date().toISOString().split('T')[0];
+    
+    // Validate date format (YYYY-MM-DD)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid date format. Please use YYYY-MM-DD' 
+      });
+    }
+
     const results = [];
 
     for (const [processName, tableName] of Object.entries(processTableMap)) {
+      console.log("Processing", processName, "from table", tableName, "for date", date);
       const targetProcessName = processTargetMap[processName];
-      const processData = await getStatsFromTable(tableName, targetProcessName);
+      const processData = await getStatsFromTable(tableName, targetProcessName, date);
       results.push({ name: processName, ...processData });
     }
 
@@ -669,6 +788,12 @@ const getProcessReports = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+
+
+
+
 
 
 
