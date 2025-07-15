@@ -684,61 +684,54 @@ const processTableMap = {
   sbi_recovery_paid: 'sbi_recovery_paid',
 };
 
-// Helper function to format date for MySQL queries
-const formatDateForMySQL = (dateString) => {
-  return dateString; // Assuming date is already in 'YYYY-MM-DD' format
-};
-
-const getStatsFromTable = async (tableName, process, date) => {
-  const formattedDate = formatDateForMySQL(date);
-  const yearMonth = formattedDate.substring(0, 7); // Extract YYYY-MM for month-based queries
-  
+const getStatsFromTable = async (tableName, process, startDate, endDate) => {
   try {
     const [[totalHeadcount]] = await Pool.promise().query(
-      `SELECT COUNT(*) AS count FROM ${tableName} WHERE DATE(datewise) <= ?`, 
-      [formattedDate]
+      `SELECT COUNT(*) AS count FROM ${tableName} 
+       WHERE DATE(datewise) BETWEEN ? AND ?`, 
+      [startDate, endDate]
     );
 
     const [[currentHeadcount]] = await Pool.promise().query(
       `SELECT COUNT(*) AS count FROM ${tableName} 
        WHERE DATE(datewise) BETWEEN DATE_SUB(?, INTERVAL 30 DAY) AND ?`, 
-      [formattedDate, formattedDate]
+      [endDate, endDate]
     );
 
     const [[totalMonthCollection]] = await Pool.promise().query(
       `SELECT SUM(amount_collected) AS total FROM ${tableName} 
-       WHERE DATE_FORMAT(datewise, '%Y-%m') = ?`, 
-      [yearMonth]
+       WHERE DATE(datewise) BETWEEN ? AND ?`, 
+      [startDate, endDate]
     );
 
     const [[currentMonthArchive]] = await Pool.promise().query(
       `SELECT COUNT(*) AS count FROM ${tableName} 
-       WHERE Process IS NOT NULL AND DATE_FORMAT(datewise, '%Y-%m') = ?`, 
-      [yearMonth]
+       WHERE Process IS NOT NULL AND DATE(datewise) BETWEEN ? AND ?`, 
+      [startDate, endDate]
     );
 
     const [[allocationCount]] = await Pool.promise().query(
       `SELECT COUNT(DISTINCT account_number) AS count FROM ${tableName} 
-       WHERE DATE(datewise) <= ?`, 
-      [formattedDate]
+       WHERE DATE(datewise) BETWEEN ? AND ?`, 
+      [startDate, endDate]
     );
 
     const [[AMs]] = await Pool.promise().query(
       `SELECT COUNT(DISTINCT am) AS count FROM ${tableName} 
-       WHERE DATE(datewise) <= ?`, 
-      [formattedDate]
+       WHERE DATE(datewise) BETWEEN ? AND ?`, 
+      [startDate, endDate]
     );
 
     const [[TLs]] = await Pool.promise().query(
       `SELECT COUNT(DISTINCT teamleader) AS count FROM ${tableName} 
-       WHERE DATE(datewise) <= ?`, 
-      [formattedDate]
+       WHERE DATE(datewise) BETWEEN ? AND ?`, 
+      [startDate, endDate]
     );
 
     const [[targetRow]] = await Pool.promise().query(
       `SELECT SUM(target) AS totalTarget FROM member 
-       WHERE process_name = ? AND DATE(datewise) <= ?`, 
-      [process, formattedDate]
+       WHERE process_name = ? AND DATE(datewise) BETWEEN ? AND ?`, 
+      [process, startDate, endDate]
     );
 
     return {
@@ -748,7 +741,7 @@ const getStatsFromTable = async (tableName, process, date) => {
         totalHeadcount: totalHeadcount.count,
         currentHeadcount: currentHeadcount.count,
         targets: `${targetRow.totalTarget || 0}`,
-        avgSalary: '65,000', // Static placeholder
+        avgSalary: '65,000',
         currentMonthArchive: currentMonthArchive.count,
         allocationCount: allocationCount.count,
         totalMonthCollection: `${totalMonthCollection.total || 0}`,
@@ -762,11 +755,20 @@ const getStatsFromTable = async (tableName, process, date) => {
 
 const getProcessReports = async (req, res) => {
   try {
-    // Get date from query parameter (default to current date if not provided)
-    const date = req.query.date || new Date().toISOString().split('T')[0];
+    // Get date range from query parameters
+    let { startDate, endDate } = req.query;
+    
+    // Set default to current month if not provided
+    if (!startDate || !endDate) {
+      const date = new Date();
+      startDate = new Date(date.getFullYear(), date.getMonth(), 1)
+        .toISOString().split('T')[0];
+      endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0)
+        .toISOString().split('T')[0];
+    }
     
     // Validate date format (YYYY-MM-DD)
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate) || !/^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
       return res.status(400).json({ 
         success: false, 
         message: 'Invalid date format. Please use YYYY-MM-DD' 
@@ -776,9 +778,13 @@ const getProcessReports = async (req, res) => {
     const results = [];
 
     for (const [processName, tableName] of Object.entries(processTableMap)) {
-      console.log("Processing", processName, "from table", tableName, "for date", date);
       const targetProcessName = processTargetMap[processName];
-      const processData = await getStatsFromTable(tableName, targetProcessName, date);
+      const processData = await getStatsFromTable(
+        tableName, 
+        targetProcessName, 
+        startDate, 
+        endDate
+      );
       results.push({ name: processName, ...processData });
     }
 
@@ -788,7 +794,6 @@ const getProcessReports = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
-
 
 
 
