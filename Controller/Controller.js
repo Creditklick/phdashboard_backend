@@ -412,7 +412,7 @@ const UploadAttendence = async (req, res) => {
       ON DUPLICATE KEY UPDATE 
         emp_name = VALUES(emp_name),
         attendance_records = VALUES(attendance_records),
-        team_leader = VALUES(team_leader)
+        team_leader = VALUES(team_leader),
         Process = VALUES(Process),
         am = VALUES(am),
         upload_date = VALUES(upload_date)
