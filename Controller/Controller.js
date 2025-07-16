@@ -396,7 +396,9 @@ const UploadAttendence = async (req, res) => {
       emp_code: row.emp_code?.trim(),
       emp_name: row.emp_name?.trim(),
       attendance_records: row.attendance_records?.trim(),
+      team_leader : row.team_leader?.trim(),
       process: process, // from req.body.tl
+      am : row.am?.trim(),
       upload_date: new Date()
     }));
 
