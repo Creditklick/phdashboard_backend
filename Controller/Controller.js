@@ -407,12 +407,14 @@ const UploadAttendence = async (req, res) => {
     await connection.beginTransaction();
 
     const insertOrUpdateQuery = `
-      INSERT INTO attendance (emp_code, emp_name, attendance_records, Process, upload_date)
+      INSERT INTO attendance (emp_code, emp_name, attendance_records,team_leader ,  Process, am ,  upload_date)
       VALUES ?
       ON DUPLICATE KEY UPDATE 
         emp_name = VALUES(emp_name),
         attendance_records = VALUES(attendance_records),
+        team_leader = VALUES(team_leader)
         Process = VALUES(Process),
+        am = VALUES(am),
         upload_date = VALUES(upload_date)
     `;
 
