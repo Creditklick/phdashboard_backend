@@ -1,14 +1,13 @@
 
 
-
--- CREATE TABLE IF NOT EXISTS Users (
+-- CREATE TABLE IF NOT EXISTS Ph_Users (
 --   id INT AUTO_INCREMENT PRIMARY KEY,
+--   ims_id VARCHAR(255) NOT NULL UNIQUE,
 --   email VARCHAR(255) NOT NULL UNIQUE,
 --   password VARCHAR(255) NOT NULL,
 --   role VARCHAR(255) NOT NULL,
 --   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 -- );
-
 
 
 
@@ -20,7 +19,7 @@
 --   ip_address VARCHAR(255),
 --   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 --   is_active BOOLEAN DEFAULT TRUE,
---   FOREIGN KEY (user_id) REFERENCES Users(id)
+--   FOREIGN KEY (user_id) REFERENCES Ph_Users(id)
 -- );
 
 
@@ -211,6 +210,8 @@
 --     aph VARCHAR(255),
 --     allocation_count INT,
 --     allocation_value_cr DECIMAL(10, 2),
+
+
 --     milestones_8th DECIMAL(10, 2),
 --     milestones_14th DECIMAL(10, 2),
 --     milestones_21st DECIMAL(10, 2),
@@ -283,42 +284,81 @@
 
 
 
-CREATE TABLE milestonedata (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    client_name VARCHAR(255),
-    product VARCHAR(255),
-    bucket VARCHAR(255),
-    ph VARCHAR(255),
-    aph VARCHAR(255),
-    allocation_count VARCHAR(255),
-    allocation_value_cr VARCHAR(255),
+-- CREATE TABLE milestonedata (
+--     id INT AUTO_INCREMENT PRIMARY KEY,
+--     client_name VARCHAR(255),
+--     product VARCHAR(255),
+--     bucket VARCHAR(255),
+--     ph VARCHAR(255),
+--     aph VARCHAR(255),
+--     allocation_count VARCHAR(255),
+--     allocation_value_cr VARCHAR(255),
 
-    milestones_8th VARCHAR(255),    -- Corrected: Added 's'
-    milestones_14th VARCHAR(255),   -- Corrected: Added 's'
-    milestones_21st VARCHAR(255),   -- Corrected: Added 's'
-    milestones_28th VARCHAR(255),   -- Corrected: Added 's'
+--     milestones_8th VARCHAR(255),    -- Corrected: Added 's'
+--     milestones_14th VARCHAR(255),   -- Corrected: Added 's'
+--     milestones_21st VARCHAR(255),   -- Corrected: Added 's'
+--     milestones_28th VARCHAR(255),   -- Corrected: Added 's'
 
-    achievement_8th VARCHAR(255),
-    achievement_14th VARCHAR(255),
-    achievement_21st VARCHAR(255),
-    achievement_28th VARCHAR(255),
+--     achievement_8th VARCHAR(255),
+--     achievement_14th VARCHAR(255),
+--     achievement_21st VARCHAR(255),
+--     achievement_28th VARCHAR(255),
 
-    achievement_percent_8th VARCHAR(255),
-    achievement_percent_14th VARCHAR(255),
-    achievement_percent_21st VARCHAR(255),
-    achievement_percent_28th VARCHAR(255),
+--     achievement_percent_8th VARCHAR(255),
+--     achievement_percent_14th VARCHAR(255),
+--     achievement_percent_21st VARCHAR(255),
+--     achievement_percent_28th VARCHAR(255),
 
-    sdlm_8th VARCHAR(255),
-    sdlm_14th VARCHAR(255),
-    sdlm_21st VARCHAR(255),
-    sdlm_28th VARCHAR(255),
+--     sdlm_8th VARCHAR(255),
+--     sdlm_14th VARCHAR(255),
+--     sdlm_21st VARCHAR(255),
+--     sdlm_28th VARCHAR(255),
 
-    sdbm_8th VARCHAR(255),
-    sdbm_14th VARCHAR(255),
-    sdbm_21st VARCHAR(255),
-    sdbm_28th VARCHAR(255),
+--     sdbm_8th VARCHAR(255),
+--     sdbm_14th VARCHAR(255),
+--     sdbm_21st VARCHAR(255),
+--     sdbm_28th VARCHAR(255),
 
-    datewise DATE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    KEY idx_datewise (datewise)
-);
+--     datewise DATE,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+--     KEY idx_datewise (datewise)
+-- );
+
+
+
+
+-- CREATE TABLE milestone2 (
+--     _id INT PRIMARY KEY AUTO_INCREMENT,
+--     ims_id VARCHAR(255) NOT NULL,
+--     client_name VARCHAR(255) NOT NULL,
+--     product VARCHAR(255) NOT NULL,
+--     bucket VARCHAR(255),
+--     ph VARCHAR(255),
+--     aph VARCHAR(255),
+--     count_value INT,
+--     value_in_cr DECIMAL(10, 2),
+--     `8th` DECIMAL(10, 2),
+--     `14th` DECIMAL(10, 2),
+--     `21th` DECIMAL(10, 2),
+--     `28th` DECIMAL(10, 2),
+
+--     `8th_Achievement` DECIMAL(10,2),
+--     `14th_Achievement` DECIMAL(10,2),
+--     `21th_Achievement` DECIMAL(10,2),
+--     `28th_Achievement` DECIMAL(10,2),
+
+--     datewise DATE NOT NULL,
+--     Create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     Update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+--     INDEX idx_client_product (client_name, product),
+--     INDEX idx_datewise (datewise),
+--     INDEX idx_client_product_date (client_name, product, datewise)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+
+
+

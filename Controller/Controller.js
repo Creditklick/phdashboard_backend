@@ -72,13 +72,13 @@ let otpStore = {};
 
 
 const UserLogin = async (req, res) => {
-  const { email, password, selectedRole } = req.body;
+  const { ims_id,  email, password, selectedRole } = req.body;
 
   console.log("Selected role from frontend:", selectedRole);
   console.log("Request body:", req.body);
 
   try {
-    const [users] = await Pool.promise().query('SELECT * FROM users WHERE email = ?', [email]);
+    const [users] = await Pool.promise().query('SELECT * FROM Ph_Users WHERE email = ? and ims_id = ? ', [email,ims_id]);
 
     if (users.length === 0) {
       return res.status(400).json({ success: false, message: "User Not Found" });
@@ -118,14 +118,16 @@ const UserLogin = async (req, res) => {
 
 
 const UserSignup = async (req, res) => {
-  const { email, password, role } = req.body;
+  const { ims_id ,  email, password, role } = req.body;
 
+  console.log("Ims id",ims_id);
   console.log("Email i s",email);
   console.log("password is",password);
   console.log("Role ",role);
 
+
   try {
-    const [userExists] = await Pool.promise().query('SELECT * FROM users WHERE email = ?', [email]);
+    const [userExists] = await Pool.promise().query('SELECT * FROM Ph_Users WHERE email = ? and ims_id', [email , ims_id]);
     if (userExists.length > 0) {
       return res.status(400).json({ success: false, message: "User already exists" });
     }
@@ -134,8 +136,8 @@ const UserSignup = async (req, res) => {
     const hashpassword = await bcrypt.hash(password, saltRounds);
 
     await Pool.promise().query(
-      'INSERT INTO users (email, password, role) VALUES (?, ?, ?)',
-      [email, hashpassword, role]
+      'INSERT INTO Ph_Users (ims_id , email, password, role) VALUES (?, ?, ? , ?)',
+      [ims_id, email, hashpassword, role]
     );
 
     res.status(200).json({ success: true, message: "User created successfully" });
@@ -150,7 +152,7 @@ const UserSignup = async (req, res) => {
 
 
 const verifyOtp = async (req, res) => {
-  const { email, otp } = req.body;
+  const { email, otp , ims_id  } = req.body;
   console.log("My input otp",otp);
   const session_token = uuidv4();
     const ip = req.ip;
@@ -179,7 +181,9 @@ const verifyOtp = async (req, res) => {
 
   delete otpStore[email]; // clean up OTP
 
-  const [userRow] = await Pool.promise().query('SELECT id , role FROM users WHERE email = ?', [email]);
+  const [userRow] = await Pool.promise().query('SELECT id , role FROM Ph_Users WHERE email = ?  and ims_id  =  ? ', [email,ims_id]);
+    
+  console.log("User Row ",userRow);
     const userId = userRow[0].id
   
     await Pool.promise().query(
@@ -198,7 +202,7 @@ const verifyOtp = async (req, res) => {
 
   console.log("verify role",roletype);
 
-  res.json({ success: true, message: 'Login successful' , user : {id  : userId , email : email , role : roletype}});
+  res.json({ success: true, message: 'Login successful' , user : {id  : userId , ims_id : ims_id ,  email : email , role : roletype}});
 };
 
 
@@ -209,6 +213,7 @@ const verifyOtp = async (req, res) => {
          console.log("call logout");
          const token = req.cookies.session_token;
          console.log("token is ",token);
+         
   if (token) {
     await Pool.promise().query('UPDATE Sessions SET is_active = FALSE WHERE session_token = ?', [token]);
     res.clearCookie('session_token');
@@ -232,7 +237,7 @@ const verifyOtp = async (req, res) => {
             }
 
 
-            const [rows] =  await Pool.promise().query('SELECT Users.id, Users.email , Users.role FROM Sessions JOIN Users ON Sessions.user_id = Users.id WHERE Sessions.session_token = ? AND Sessions.is_active = TRUE',[token]);
+            const [rows] =  await Pool.promise().query('SELECT Ph_Users.id, Ph_Users.ims_id ,  Ph_Users.email , Ph_Users.role FROM Sessions JOIN Ph_Users ON Sessions.user_id = Ph_Users.id WHERE Sessions.session_token = ? AND Sessions.is_active = TRUE',[token]);
 
 
              if (!rows.length) {
